@@ -134,7 +134,6 @@ const Home = ({ navigation }) => {
             <Text style={styles.text}>Naveen Kumar</Text>
             <Text style={styles.text}>2 minutes away</Text>
           </View>
-
           {/* Add more drivers here as needed */}
         </ScrollView>
 

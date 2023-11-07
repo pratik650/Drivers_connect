@@ -3,17 +3,26 @@ import { Alert, View, Image, Text, StyleSheet, TouchableOpacity, ScrollView, Saf
 import Footer from './Footer';
 const Requestsent = require('../../assets/icons/requestdone.png');
 import Callender from '../static_component/callendar';
+import useNotification  from '../static_component/NotificationContext.js'; // Adjust the import path as necessary
 
 const BookingPage = () => {
     const [selectedTime, setSelectedTime] = useState(null);
     const [passengerCount, setPassengerCount] = useState(1); // assuming a state for passenger count
     const [isModalVisible, setIsModalVisible] = useState(false);
     const FOOTER_HEIGHT = 50;
+    const [confirmationNumber, setConfirmationNumber] = useState(null);
+    const { addNotification } = useNotification(); 
+
 
     const [selectedDate, setSelectedDate] = useState(); // defaulting to today
 
     const handleDateChange = (newDate) => {
         setSelectedDate(newDate);
+    };
+    //logic to generate otp
+    const generateConfirmationNumber = () => {
+        const number = Math.floor(1000 + Math.random() * 9000);
+        setConfirmationNumber(number);
     };
 
     const times = ["9:00", "10:00", "11:00", "12:00", "1:00", "2:00", "3:00"];
@@ -21,12 +30,14 @@ const BookingPage = () => {
 
     const handleConfirm = () => {
         if (selectedTime === null) {
-
             Alert.alert("Let's Drive says:", 'Please select a pick-up time before confirming.');
         }
-
         else {
+            const number = Math.floor(1000 + Math.random() * 9000); // Generate the number here
+            setConfirmationNumber(number); // Schedule the state update
             console.log("Selected Time:", times[selectedTime]); // This should log the selected time to the console.
+            console.log("Your confirmation code is: ", number); // Use the number directly here
+            addNotification(`Your booking confirmation number is: ${number}`); // Use the number directly here as well
             setIsModalVisible(true);
         }
     };
@@ -118,6 +129,9 @@ const BookingPage = () => {
                         </TouchableOpacity>
                         <Text style={styles.modalText}>
                             Your request has been sent to the driver:
+                        </Text>
+                        <Text style={styles.modalText}>
+                            OTP : {confirmationNumber}
                         </Text>
                         <Text style={styles.modalText}>
                             Date: {selectedDate}

@@ -21,13 +21,13 @@ const Footer = () => {
         <TouchableOpacity style={styles.iconWrap} onPress={() => navigation.navigate('Searchdriver')}>
           <Image source={searchIcon} style={styles.icon} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.iconWrap} onPress={() => navigation.navigate('Payment')}>
+        <TouchableOpacity style={styles.iconWrap} onPress={() => navigation.navigate('NotificationsPage')}>
           <Image source={bellicon} style={styles.icon} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.iconWrap} onPress={() => navigation.navigate('Profile')}>
           <Image source={profileIcon} style={styles.icon} />
         </TouchableOpacity>
-      </View>
+      </View>  
     </SafeAreaView>
  );
 };

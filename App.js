@@ -9,13 +9,16 @@ import Driverdetails from './src/component/Driverdetails.js';
 import BookingPage from './src/component/Finalbooking.js';
 import Profile from './src/component/Profile.js';
 import Searchdriver from './src/static_component/Searchpage.js';
+import NotificationsPage from './src/component/Notification.js';
+import { NotificationProvider } from './src/static_component/NotificationContext.js';
 
 const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (
+    <NotificationProvider>
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home" screenOptions={{
+      <Stack.Navigator initialRouteName="Splashscreen" screenOptions={{
     headerShown: false, }}>
         <Stack.Screen name="Splashscreen" component={Splashscreen} />
         <Stack.Screen name="Register" component={Register} />
@@ -25,8 +28,10 @@ const App = () => {
         <Stack.Screen name="Bookingpage" component={BookingPage} />
         <Stack.Screen name="Profile" component={Profile} />
         <Stack.Screen name="Searchdriver" component={Searchdriver} />
+        <Stack.Screen name="NotificationsPage" component={NotificationsPage} />
       </Stack.Navigator>
     </NavigationContainer>
+    </NotificationProvider>
   );
 };
 
