@@ -133,6 +133,7 @@ const styles = StyleSheet.create({
       marginTop: 20,
       fontSize: 18,
       color: 'black', // No results text color
+      
     },
   });
   

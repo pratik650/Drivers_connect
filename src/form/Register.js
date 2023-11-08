@@ -7,6 +7,9 @@ const Register = ({ navigation }) => {
   const navigateToLogin = () => {
     navigation.navigate('Login'); // Use the exact name you defined in your stack navigator
   };
+  const navigateTosignup = () => {
+    navigation.navigate('DriverRegistration'); // Use the exact name you defined in your stack navigator
+  };
 
   return (
     <ImageBackground source={backgroundImage} style={styles.background}>
@@ -23,7 +26,7 @@ const Register = ({ navigation }) => {
             <TouchableOpacity style={[styles.buttonMargin] } onPress={navigateToLogin}>
               <Text style={styles.buttonText}>Login</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.joinButton]}>
+            <TouchableOpacity style={[styles.joinButton]} onPress={navigateTosignup}>
               <Text style={styles.buttonText}>Join Now</Text>
             </TouchableOpacity>
         </View>

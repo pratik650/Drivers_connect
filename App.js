@@ -11,26 +11,29 @@ import Profile from './src/component/Profile.js';
 import Searchdriver from './src/static_component/Searchpage.js';
 import NotificationsPage from './src/component/Notification.js';
 import { NotificationProvider } from './src/static_component/NotificationContext.js';
+import DriverRegistration from './src/form/DriverRegistration.js';
 
 const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (
     <NotificationProvider>
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Splashscreen" screenOptions={{
-    headerShown: false, }}>
-        <Stack.Screen name="Splashscreen" component={Splashscreen} />
-        <Stack.Screen name="Register" component={Register} />
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Driverdetails" component={Driverdetails} />
-        <Stack.Screen name="Bookingpage" component={BookingPage} />
-        <Stack.Screen name="Profile" component={Profile} />
-        <Stack.Screen name="Searchdriver" component={Searchdriver} />
-        <Stack.Screen name="NotificationsPage" component={NotificationsPage} />
-      </Stack.Navigator>
-    </NavigationContainer>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="DriverRegistration" screenOptions={{
+          headerShown: false,
+        }}>
+          <Stack.Screen name="Splashscreen" component={Splashscreen} />
+          <Stack.Screen name="Register" component={Register} />
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="Driverdetails" component={Driverdetails} />
+          <Stack.Screen name="Bookingpage" component={BookingPage} />
+          <Stack.Screen name="Profile" component={Profile} />
+          <Stack.Screen name="Searchdriver" component={Searchdriver} />
+          <Stack.Screen name="NotificationsPage" component={NotificationsPage} />
+          <Stack.Screen name="DriverRegistration" component={DriverRegistration} />
+        </Stack.Navigator>
+      </NavigationContainer>
     </NotificationProvider>
   );
 };
