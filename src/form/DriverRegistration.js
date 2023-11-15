@@ -1,99 +1,149 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, SafeAreaView, TouchableOpacity, Text , ScrollView } from 'react-native';
-import Footer from '../component/Footer';
-
+import { View, TextInput, Button, StyleSheet, SafeAreaView, TouchableOpacity, Text, ScrollView, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const RadioOption = ({ label, selected, onSelect }) => {
-    return (
-      <TouchableOpacity style={styles.radioContainer} onPress={onSelect}>
-        <View style={selected ? styles.radioSelected : styles.radio} />
-        <Text style={styles.radioText}>{label}</Text>
-      </TouchableOpacity>
-    );
-  };
+  return (
+    <TouchableOpacity style={styles.radioContainer} onPress={onSelect}>
+      <View style={selected ? styles.radioSelected : styles.radio} />
+      <Text style={styles.radioText}>{label}</Text>
+    </TouchableOpacity>
+  );
+};
 
 
 const DriverRegistration = () => {
+  const navigation = useNavigation();
   const [fullName, setFullName] = useState('');
   const [address, setAddress] = useState('');
+  const [Phonenumber, setPhonenumber] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [adhaarId, setAadhar] = useState('');
+  const [birthdate, setBirthdate] = useState('');
   const [eligible, setEligible] = useState(false);
   const [available, setAvailable] = useState(false);
 
-  const handleSignUp = () => {
-    
-    console.log('Sign Up', { fullName, address, email, password });
+
+
+  const handleSignUp = async () => {
+    const driverData = {
+      fullName,
+      address,
+      email,
+      Phonenumber,
+      password, 
+      adhaarId,
+      birthdate, 
+      eligible,
+      available,
+    };
+
+    try {
+      const response = await fetch('http://192.168.29.129:5000/api/drivers/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(driverData),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.text(); // or response.json() if the server sends JSON
+        console.log('Error response body:', errorBody);
+        throw new Error('Server responded with an error!');
+      }
+
+      const json = await response.json();
+      Alert.alert("Success", "Your registration is successful");
+      console.log("registration succesfull");
+      navigation.navigate('Login');
+
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    }
   };
 
   return (
-    
-    <SafeAreaView style={styles.container}>
-        <ScrollView contentContainerStyle={styles.scrollViewContent}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Create your profile</Text>
-      </View>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Full Name"
-          value={fullName}
-          placeholderTextColor='black'
-          onChangeText={setFullName}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Address"
-          placeholderTextColor='black'
-          value={address}
-          
-          onChangeText={setAddress}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Email Address"
-          placeholderTextColor='black'
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          value={password}
-          placeholderTextColor='black'
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Adhaar Id"
-          value={password}
-          placeholderTextColor='black'
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-        <View style={styles.radioGroup}>
-          <Text style={{color:'black'}}>Are you legally eligible to drive in your country?</Text>
-          <RadioOption label="Yes" selected={eligible} onSelect={() => setEligible(true)} />
-          <RadioOption label="No" selected={!eligible} onSelect={() => setEligible(false)} />
-        </View>
 
-        {/* Custom Radio Buttons for Availability */}
-        <View style={styles.radioGroup}>
-          <Text  style={{color:'black'}}>Are you able to provide driving services on 2 days a week?</Text>
-          <RadioOption label="Yes" selected={available} onSelect={() => setAvailable(true)} />
-          <RadioOption label="No" selected={!available} onSelect={() => setAvailable(false)} />
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Create your profile</Text>
         </View>
-        <TouchableOpacity style={styles.button} onPress={handleSignUp}>
-          <Text style={styles.buttonText}>Sign Up</Text>
-        </TouchableOpacity>
-      </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Full Name"
+            value={fullName}
+            placeholderTextColor='#A9A9A9'
+            onChangeText={setFullName}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Address"
+            placeholderTextColor='#A9A9A9'
+            value={address}
+            onChangeText={setAddress}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Phone number"
+            value={Phonenumber}
+            placeholderTextColor='#A9A9A9'
+            onChangeText={setPhonenumber}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Email Address"
+            placeholderTextColor='#A9A9A9'
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            value={password}
+            placeholderTextColor='#A9A9A9'
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Adhaar Id"
+            value={adhaarId}
+            placeholderTextColor='#A9A9A9'
+            onChangeText={setAadhar}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Birthdate"
+            value={birthdate}
+            placeholderTextColor='#A9A9A9'
+            onChangeText={setBirthdate} // Updates the birthdate state when the user types
+          // You can add keyboardType as 'numeric' if you want to restrict input to numbers
+          />
+          <View style={styles.radioGroup}>
+            <Text style={{ color: 'black' }}>Are you legally eligible to drive in your country?</Text>
+            <RadioOption label="Yes" selected={eligible} onSelect={() => setEligible(true)} />
+            <RadioOption label="No" selected={!eligible} onSelect={() => setEligible(false)} />
+          </View>
+
+          {/* Custom Radio Buttons for Availability */}
+          <View style={styles.radioGroup}>
+            <Text style={{ color: 'black' }}>Are you able to provide driving services on 2 days a week?</Text>
+            <RadioOption label="Yes" selected={available} onSelect={() => setAvailable(true)} />
+            <RadioOption label="No" selected={!available} onSelect={() => setAvailable(false)} />
+          </View>
+          <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+            <Text style={styles.buttonText}>Sign Up</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
-    <Footer/>
     </SafeAreaView>
-  
-   
+
+
   );
 };
 
@@ -103,21 +153,21 @@ const styles = StyleSheet.create({
     paddingBottom: 90, // Keeps a padding at the bottom
   },
   container: {
-    flex:1
+    flex: 1
   },
   header: {
     alignItems: 'center',
     padding: 20,
-    backgroundColor:'#893BFF',
+    backgroundColor: '#893BFF',
   },
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: 'black'
+    color: 'white'
   },
   inputContainer: {
     paddingHorizontal: 20,
-    marginTop:60,
+    marginTop: 60,
   },
   input: {
     height: 50,
@@ -127,6 +177,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderColor: 'grey',
     backgroundColor: 'white',
+    color: 'black'
   },
   button: {
     height: 40,

@@ -1,13 +1,58 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons'; // Make sure to install the react-native-vector-icons package
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import Footer from './Footer';
-const homeIcon = require('../../assets/icons/back.png');
 import { useNavigation } from '@react-navigation/native';
+
+const homeIcon = require('../../assets/icons/back.png');
 const cabperson2 = require('../../Images/cabperson1.jpg');
 
 const Profile = () => {
     const navigation = useNavigation();
+
+    const [userData, setUserData] = useState({
+        fullName: '',
+        address: '',
+        phoneNumber: '',
+        email: '',
+        adhaarId: '',
+        birthdate: ''
+    });
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await fetch('http://192.168.29.129:5000/api/drivers/register');
+                const data = await response.json();
+                console.log(data);
+                setUserData({
+                    fullName: data.fullName,
+                    address: data.address,
+                    phoneNumber: data.phoneNumber,
+                    email: data.email,
+                    adhaarId: data.adhaarId,
+                    birthdate: data.birthdate
+                });
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+                if (error.response) {
+                    console.log(error.response.data);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    console.log(error.request);
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    console.log('Error', error.message);
+                }
+                console.log(error.config);
+            }
+        };
+
+        fetchUserData();
+    }, []);
+
     return (
         <View style={styles.container}>
             <View style={styles.headcont}>
@@ -24,43 +69,52 @@ const Profile = () => {
                     style={styles.profileImage}
                 />
                 <View style={styles.infoContainer}>
-                   
+
                     <TextInput
                         placeholder="Full name"
+                        value={userData.fullName}
                         style={styles.input}
-                        placeholderTextColor= '#808080'
+                        placeholderTextColor='#808080'
                     />
                 </View>
                 <View style={styles.infoContainer}>
-                    
                     <TextInput
-                        placeholder="Birthday"
+                        placeholder="Address"
+                        value={userData.address}
                         style={styles.input}
-                        placeholderTextColor= '#808080'
+                        placeholderTextColor='#808080'
                     />
                 </View>
                 <View style={styles.infoContainer}>
-                    
                     <TextInput
-                        placeholder="Contact No"
+                        placeholder="PhoneNumber"
+                        value={userData.phoneNumber}
                         style={styles.input}
-                        placeholderTextColor= '#808080'
+                        placeholderTextColor='#808080'
                     />
                 </View>
                 <View style={styles.infoContainer}>
-                   
                     <TextInput
                         placeholder="Gmail Account"
+                        value={userData.email}
                         style={styles.input}
-                        placeholderTextColor= '#808080'
+                        placeholderTextColor='#808080'
                     />
                 </View>
                 <View style={styles.infoContainer}>
-                   
                     <TextInput
-                        placeholder="Log Put"
+                        placeholder="Aadhar"
+                        value={userData.adhaarId}
                         style={styles.input}
-                        placeholderTextColor= '#808080'
+                        placeholderTextColor='#808080'
+                    />
+                </View>
+                <View style={styles.infoContainer}>
+                    <TextInput
+                        placeholder="Birthdate"
+                        value={userData.birthdate}
+                        style={styles.input}
+                        placeholderTextColor='#808080'
                     />
                 </View>
                 <TouchableOpacity style={styles.button}>
@@ -73,7 +127,7 @@ const Profile = () => {
 };
 
 const styles = StyleSheet.create({
-    headcont:{
+    headcont: {
         backgroundColor: '#893BFF', // This sets the background color for the header containing the icon and title
         flexDirection: 'row', // Ensures the items are in a row
         alignItems: 'center', // Centers items vertically
@@ -88,19 +142,19 @@ const styles = StyleSheet.create({
         marginLeft: 30,
         marginTop: 0,
         fontWeight: 'bold'
-      },
+    },
     input: {
         marginLeft: 10,
         flex: 1, // Take up all available space
         padding: 0, // Depending on your design you might want to adjust this
         fontSize: 16, // Set the font size as needed
-        color:'black'
+        color: 'black'
     },
     icon: {
         width: 24,
         height: 24
     },
-  
+
     container: {
         flex: 1,
     },
@@ -110,7 +164,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         flexDirection: 'row',
         alignItems: 'center', // This will vertically align the icon and the title
-      },
+    },
     profileContainer: {
         alignItems: 'center',
         marginTop: -50, // Adjust as needed to position the profile image over the header

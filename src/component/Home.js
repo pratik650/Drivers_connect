@@ -56,8 +56,8 @@ const Home = ({ navigation }) => {
         {/* Header Section */}
         <View style={styles.header}>
 
-          <Text style={{ marginTop: 40, position: 'absolute', fontWeight: 'bold', fontSize: 24, color: '#ffff' }}>
-            Book a driver now
+          <Text style={{ marginTop: 50, position: 'absolute', fontWeight: 'bold', fontSize: 24, color: '#ffff' }}>
+            Book a driver now!
           </Text>
 
           {/* Input */}

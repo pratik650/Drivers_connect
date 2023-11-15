@@ -7,13 +7,48 @@ const Login = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const navigateToLogin = () => {
+  const navigateToLogin = async () => {
     if (username.trim() === '' || password.trim() === '') {
       Alert.alert('Missing Information', 'Please enter both mobile number and password.');
-    } else {
-      navigation.navigate('Home'); 
+      return;
+    }
+
+    const loginData = {
+      phoneNumber: username.trim(), // Assuming that 'username' is actually the phone number
+      password: password.trim(),
+    };
+
+    try {
+      const response = await fetch('http://192.168.29.129:5000/api/drivers/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(loginData),
+      });
+
+      if (response.ok) {
+        const json = await response.json();
+        console.log('Login successful:', json);
+        const userName = json.userName || 'User'; // Default to 'User' if fullName is not available
+
+        Alert.alert("Welcome", userName);
+        
+        navigation.navigate('Home');
+      } else {
+        // If response is not ok, you might still want to parse it as json if the server sent a json error response
+        const json = await response.json();
+        console.log('Login failed response:', json);
+        Alert.alert('Login Failed', json.message || 'An error occurred. Please try again.');
+      }
+    } catch (error) {
+      // Handle network errors
+      Alert.alert('Network Error', 'Unable to connect to the server. Please check your internet connection and try again.');
+      console.error('Login request error:', error);
     }
   };
+
+
 
   return (
     <ImageBackground source={backgroundImage} style={styles.background}>
@@ -23,6 +58,7 @@ const Login = ({ navigation }) => {
           <Text style={styles.heading}>Mobile</Text>
           <TextInput
             placeholder="Enter your mobile number"
+            placeholderTextColor='#A9A9A9'
             value={username}
             onChangeText={setUsername}
             style={styles.input}
@@ -31,6 +67,7 @@ const Login = ({ navigation }) => {
           <TextInput
             placeholder="Enter your password"
             value={password}
+            placeholderTextColor='#A9A9A9'
             onChangeText={setPassword}
             secureTextEntry
             style={styles.input}

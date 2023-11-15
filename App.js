@@ -19,7 +19,7 @@ const App = () => {
   return (
     <NotificationProvider>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="DriverRegistration" screenOptions={{
+        <Stack.Navigator initialRouteName="Splashscreen" screenOptions={{
           headerShown: false,
         }}>
           <Stack.Screen name="Splashscreen" component={Splashscreen} />
