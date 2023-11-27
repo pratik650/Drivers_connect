@@ -8,5 +8,8 @@ const driverController = require('../controller/Drivercontroller');
 
 router.post('/register', driverController.registerDriver);
 router.post('/login', driverController.driverLogin);
+router.get('/profile/:Phonenumber', driverController.getDriverProfile);
+router.get('/driverdetails', driverController.driverDetails);
+
 
 module.exports = router;

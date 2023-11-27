@@ -1,216 +1,234 @@
 import React, { useState, useEffect } from 'react';
 import {
-  ScrollView, View, Text, TextInput, TouchableOpacity, Image, StyleSheet, KeyboardAvoidingView, Keyboard,
+  ScrollView, View, Text, TextInput,FlatList,  TouchableOpacity, Image, StyleSheet, KeyboardAvoidingView, Keyboard,
   Platform,
 } from 'react-native';
 import Footer from './Footer';
-import PaymentSection from '../static_component/Payments';
 const dropdownIcon = require('../../assets/icons/dopdown.png');
-
-
+const cabperson1 = require('../../Images/cabperson.jpg'); // Ensure these images are available in your project
+const cabperson2 = require('../../Images/cabperson1.jpg');
+const cabperson3 = require('../../Images/cabperson2.jpg');
+const tickmark = require('../../Images/cabperson2.jpg');
 
 const statesOfIndia = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar",
   "Chhattisgarh", "Goa", "Gujarat", "Haryana",
-  //... add other states
 ];
 
-const cabperson1 = require('../../Images/cabperson.jpg'); // Ensure these images are available in your project
-const cabperson2 = require('../../Images/cabperson1.jpg');
-const cabperson3 = require('../../Images/cabperson2.jpg');
+const DATA = [
+  {
+    id: '1',
+    name: 'Wade Wagner',
+    location: 'Rhode Island',
+    image: cabperson1,
+  },
+  {
+    id: '2',
+    name: 'John Wade',
+    location: 'Massachusetts',
+    image: cabperson2,
+  },
+  {
+    id: '3',
+    name: 'Oldman Wade',
+    location: 'Tennessee',
+    image: cabperson3,
+  },
+  {
+    id: '4',
+    name: 'John Wade',
+    location: 'Massachusetts',
+    image: cabperson2,
+  },
+  {
+    id: '5',
+    name: 'Oldman Wade',
+    location: 'Tennessee',
+    image: cabperson3,
+  },
+  {
+    id: '6',
+    name: 'Oldman Wade',
+    location: 'Tennessee',
+    image: cabperson3,
+  },
+  {
+    id: '7',
+    name: 'Oldman Wade',
+    location: 'Tennessee',
+    image: cabperson3,
+  },
+  {
+    id: '8',
+    name: 'Oldman Wade',
+    location: 'Tennessee',
+    image: cabperson3,
+  },
+];
+
+const Item = ({ name, location, image }) => (
+  <View style={styles.item}>
+    <Image style={styles.image} source={image} />
+    <View style={styles.infoContainer}>
+      <Text style={styles.name}>{name}</Text>
+      <Text style={styles.location}>{location}</Text>
+    </View>
+  </View>
+);
 
 const Home = ({ navigation }) => {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
-  const navigate_details_of_driver = (driverDetails) => {
-    navigation.navigate('Driverdetails', { driverDetails });
-  };
-
-  //for avoiding screen to grow with keyboard
-
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
-
-  useEffect(() => {
-    const keyboardWillShowListener = Keyboard.addListener(
-      'keyboardWillShow',
-      () => setKeyboardVisible(true)
-    );
-    const keyboardWillHideListener = Keyboard.addListener(
-      'keyboardWillHide',
-      () => setKeyboardVisible(false)
-    );
-
-    return () => {
-      keyboardWillShowListener.remove();
-      keyboardWillHideListener.remove();
-    };
-  }, []);
-
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
-    >
-      <View style={styles.mainContainer}>
-        {/* Header Section */}
-        <View style={styles.header}>
-
-          <Text style={{ marginTop: 50, position: 'absolute', fontWeight: 'bold', fontSize: 24, color: '#ffff' }}>
-            Book a driver now!
-          </Text>
-
-          {/* Input */}
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.textInput}
-              placeholder="Enter pickup location"
-              placeholderTextColor="#787878"
-            />
-            <TouchableOpacity
-              style={styles.iconButton}
-              onPress={() => setIsDropdownVisible(!isDropdownVisible)}
-            >
-              <TouchableOpacity style={styles.iconWrap}>
-                <Image source={dropdownIcon} style={styles.icon} />
-              </TouchableOpacity>
-            </TouchableOpacity>
-          </View>
-
-          {/* Dropdown for States of India */}
-          {isDropdownVisible && (
-            <View style={styles.dropdown}>
-              {statesOfIndia.map((state, index) => (
-                <Text key={index}>{state}</Text>
-              ))}
-            </View>
-          )}
+    <View style={styles.mainContainer}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Drop users on their destination with us!</Text>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.textInput}
+            placeholder="Choose your current location"
+            placeholderTextColor="#787878"
+          />
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={() => setIsDropdownVisible(!isDropdownVisible)}
+          >
+            <Image source={dropdownIcon} style={styles.icon} />
+          </TouchableOpacity>
         </View>
-
-        {/* Drivers List */}
-        <View style={{ paddingHorizontal: 20, paddingTop: 20 }}>
-          <Text style={{ fontSize: 24, fontWeight: "bold", color: '#000000', marginBottom: 15 }}>
-            Drivers near you
-          </Text>
-        </View>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.driversListContainer}
-          contentContainerStyle={styles.driversListContent}
-        >
-          {/* Driver 1 */}
-          <View style={styles.driverContainer}>
-            <TouchableOpacity onPress={() => navigate_details_of_driver({ name: "Ramesh Pawar", time: "5 minutes away", image: cabperson1 })}>
-              <Image
-                source={cabperson1}
-                style={styles.driverImage}
-              />
-            </TouchableOpacity>
-            <Text style={styles.text}>Ramesh Pawar</Text>
-            <Text style={styles.text}>5 minutes away</Text>
+        {isDropdownVisible && (
+          <View style={styles.dropdown}>
+            {statesOfIndia.map((state, index) => (
+              <Text key={index} style={styles.dropdownText}>{state}</Text>
+            ))}
           </View>
-
-          {/* Driver 2 */}
-          <View style={styles.driverContainer}>
-            <TouchableOpacity onPress={() => navigate_details_of_driver({ name: "Prakash Sisodiya", time: "10 minutes away", image: cabperson2 })}>
-              <Image
-                source={cabperson2}
-                style={styles.driverImage}
-              />
-            </TouchableOpacity>
-            <Text style={styles.text}>Prakash Sisodiya</Text>
-            <Text style={styles.text}>10 minutes away</Text>
-          </View>
-
-          {/* Driver 3 */}
-          <View style={styles.driverContainer}>
-            <TouchableOpacity onPress={() => navigate_details_of_driver({ name: "Naveen Kumar", time: "2 minutes away", image: cabperson3 })}>
-              <Image
-                source={cabperson3}
-                style={styles.driverImage}
-              />
-            </TouchableOpacity>
-            <Text style={styles.text}>Naveen Kumar</Text>
-            <Text style={styles.text}>2 minutes away</Text>
-          </View>
-          {/* Add more drivers here as needed */}
-        </ScrollView>
-
-        {!keyboardVisible && <PaymentSection />}
-        {!keyboardVisible && <Footer navigation={navigation} />}
+        )}
       </View>
-    </KeyboardAvoidingView>
+      
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.contentContainer}
+      >
+        <View style={styles.listContainer}>
+          <Text style={styles.listTitle}>
+            Users requested for drive
+          </Text>
+          <View style={styles.driversList}>
+          <FlatList
+            data={DATA}
+            renderItem={({ item }) => <Item name={item.name} location={item.location} image={item.image} />}
+            keyExtractor={item => item.id}
+            ListEmptyComponent={<Text style={styles.noResult}>No drivers found.</Text>}
+          />
+          </View>
+        </View>
+      </KeyboardAvoidingView>
+
+      <Footer navigation={navigation} />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  icon: {
-    width: 20,
-    height: 20,
-    padding: 10
-  },
   mainContainer: {
     flex: 1,
-    backgroundColor: '#ffff'
+    backgroundColor: '#fff',
   },
   header: {
-    padding: 50,
-    alignItems: "center",
-    color: '#000000',
-    backgroundColor: '#893BFF',
-
+    padding: 40,
+    backgroundColor: '#357EC7',
+    // Removed the height percentage to avoid shrinking
+  },
+  headerTitle: {
+    fontWeight: 'bold',
+    fontSize: 21,
+    color: '#fff',
+    textAlign: 'center',
+    marginTop: 30,
   },
   inputContainer: {
     flexDirection: 'row',
-    marginTop: 90,
+    marginTop: 50,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 25,
     backgroundColor: '#FFF',
-    width: '100%',
-    height: 50
+    paddingHorizontal: 15,
+    height: 50,
+    alignItems: 'center',
   },
   textInput: {
     flex: 1,
-    paddingHorizontal: 15,
-    height: 50,
-    color: 'black'
+    color: '#000',
   },
   iconButton: {
-    width: 40,
-    height: 55,
-    justifyContent: 'center',
-    alignItems: 'center',
+    padding: 10,
+  },
+  icon: {
+    width: 24,
+    height: 24,
   },
   dropdown: {
-    width: '100%',
     backgroundColor: '#fff',
     borderColor: '#ccc',
     borderWidth: 1,
     marginTop: 10,
-    paddingHorizontal: 15,
-    maxHeight: 150, // Specify the max height for the dropdown
+    maxHeight: 150,
   },
-  driversListContainer: {
-    height: 20,
+  dropdownText: {
+    padding: 10,
+    textAlign: 'center',
   },
-  driversListContent: {
+  contentContainer: {
+    flex: 1, // This ensures that the content uses the available space
+  },
+  listContainer: {
     paddingHorizontal: 20,
+    flex: 1, 
   },
-  driverContainer: {
-    alignItems: "center",
-    marginRight: 15, // Add spacing between the items
+  driversList: {
+    width: '100%',
+    alignSelf: 'center',
+    flexGrow: 1,
   },
-  driverImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 5, // Add spacing between the image and text
+  listTitle: {
+    fontSize: 21,
+    fontWeight: "bold",
+    color: '#000',
+    marginTop: 35,
+    marginBottom: 45,
   },
-  text: {
-    color: '#000000',
-    textAlign: 'center', // Ensure text is centered under the image
+  item: {
+    flexDirection: 'row',
+    padding: 10, // Adjust padding if necessary
+    marginVertical: 5, // Adjust margin if necessary
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: '#000',
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  image: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  infoContainer: {
+    marginLeft: 10,
+  },
+  name: {
+    fontSize: 18,
+    color: '#000',
+  },
+  location: {
+    fontSize: 14,
+    color: '#888',
+  },
+  noResult: {
+    alignSelf: 'center',
+    marginTop: 20,
+    fontSize: 18,
+    color: '#000',
   },
 });
 

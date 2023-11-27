@@ -26,7 +26,6 @@ const driverSchema = new mongoose.Schema({
   Phonenumber: {
     type: String,
     required: [true, 'Phone number is required'],
-    trim: true,
   },
   adhaarId: {
     type: String,

@@ -2,9 +2,9 @@ const Driver = require('../models/Driver');
 const bcrypt = require('bcrypt');
 
 exports.registerDriver = async (req, res) => {
+    console.log("step1")
     const { fullName, address, Phonenumber, email, password, adhaarId, birthdate, eligible, available } = req.body;
     console.log(req.body);
-    // Basic validation
     if (!fullName || !address || !Phonenumber || !email || !password || !adhaarId || !birthdate) {
         return res.status(400).json({ message: 'All fields are required' });
     }
@@ -15,7 +15,7 @@ exports.registerDriver = async (req, res) => {
     }
 
     try {
-        const existingDriverQuery = Driver.findOne({ email });
+        const existingDriverQuery = Driver.findOne({Phonenumber});
         existingDriverQuery.maxTimeMS(20000); // Set timeout to 20 seconds
         const existingDriver = await existingDriverQuery;
 
@@ -41,17 +41,9 @@ exports.registerDriver = async (req, res) => {
 
         await newDriver.save();
         // for profile completion purpose
-        const driverData = {
-            fullName: newDriver.fullName,
-            address: newDriver.address,
-            Phonenumber: newDriver.Phonenumber,
-            email: newDriver.email,
-            adhaarId: newDriver.adhaarId,
-            birthdate: newDriver.birthdate,
-        };
+        
         res.status(201).json({ 
             message: 'Driver registered successfully', 
-            driver: driverData // Send back the driver data
         });
     } catch (error) {
         // If it's a validation error
@@ -69,10 +61,10 @@ exports.registerDriver = async (req, res) => {
 // In your Drivercontroller.js
 
 exports.driverLogin = async (req, res) => {
-    const { Phonenumber, password } = req.body;
-
+    const {Phonenumber,password} = req.body;
     try {
-        const driver = await Driver.findOne({ Phonenumber }).exec();
+        const driver = await Driver.findOne({Phonenumber}).exec();
+        console.log(driver)
         if (!driver) {
             return res.status(401).json({ message: 'Phone number not found, please try again.' });
         }
@@ -88,5 +80,52 @@ exports.driverLogin = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error occurred.', error: error.message });
+    }
+};
+
+
+exports.getDriverProfile = async (req, res) => {
+    const { Phonenumber }  = req.params; // Assuming you're using Phonenumber as the identifier
+    try {
+        const driver = await Driver.findOne({ Phonenumber }).exec();
+        if (!driver) {
+            return res.status(404).json({ message: 'Driver not found.' });
+        }
+
+        // Select the fields you want to send back
+        const profileData = {
+            fullName: driver.fullName,
+            address: driver.address,
+            phoneNumber: driver.Phonenumber,
+            email: driver.email,
+           
+        };
+        res.json({
+            message: 'Profile fetched successfully.',
+            profile: profileData,
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error occurred.', error: error.message });
+    }
+};
+
+exports.driverDetails = async (req, res) => {
+    try {
+        const drivers = await Driver.find({}).exec(); // Fetch all drivers
+        if (!drivers || drivers.length === 0) {
+            return res.status(404).json({ success: false, message: 'No drivers found.' });
+        }
+
+        res.json({
+            success: true,
+            message: 'Drivers fetched successfully.',
+            data: drivers
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Server error occurred.', error: error.message });
     }
 };

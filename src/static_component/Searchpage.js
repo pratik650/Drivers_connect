@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
       },
       header: {
-        backgroundColor: '#893BFF', // Header background color
+        backgroundColor: '#357EC7', // Header background color
         padding: 30,// Padding at the bottom of the header
       },
       searchBar: {
@@ -96,6 +96,7 @@ const styles = StyleSheet.create({
         borderRadius: 40,
         borderWidth: 1,
         backgroundColor: 'white', 
+        borderColor: 'white',
         marginTop:100,
         marginBottom:30,
       },

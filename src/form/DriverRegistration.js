@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, SafeAreaView, TouchableOpacity, Text, ScrollView, Alert } from 'react-native';
+import { View, TextInput,Image,  Button, StyleSheet, SafeAreaView, TouchableOpacity, Text, ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+const cabregisterlogo = require('../../Images/drivecab.png');
+
 
 const RadioOption = ({ label, selected, onSelect }) => {
   return (
@@ -10,6 +12,7 @@ const RadioOption = ({ label, selected, onSelect }) => {
     </TouchableOpacity>
   );
 };
+
 
 
 const DriverRegistration = () => {
@@ -27,6 +30,7 @@ const DriverRegistration = () => {
 
 
   const handleSignUp = async () => {
+   
     const driverData = {
       fullName,
       address,
@@ -40,7 +44,7 @@ const DriverRegistration = () => {
     };
 
     try {
-      const response = await fetch('http://192.168.29.129:5000/api/drivers/register', {
+      const response = await fetch('http://192.168.1.14:3000/api/drivers/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -68,9 +72,18 @@ const DriverRegistration = () => {
 
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <View style={styles.header}>
-          <Text style={styles.headerText}>Create your profile</Text>
-        </View>
+      <View style={styles.headercontainer}>
+      <TouchableOpacity style={styles.header}>
+        <Image
+          source={cabregisterlogo}
+          style={styles.headerImage}
+        />
+      </TouchableOpacity>
+      <View style={styles.Headertextdiv}>
+      <Text style={styles.titleText}>DriverGo App</Text>
+      <Text style={styles.subtitleText}>Find your way easily with DriverGo.</Text>
+      </View>
+      </View>
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
@@ -148,6 +161,24 @@ const DriverRegistration = () => {
 };
 
 const styles = StyleSheet.create({
+  headercontainer:{
+    backgroundColor:'#357EC7',
+    paddingBottom:50
+  },
+  Headertextdiv: {
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  titleText: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginTop: -40, // Adjust to your screen
+    color:'black',
+  },
+  subtitleText: {
+    fontSize: 16,
+    color: 'white',
+  },
   scrollViewContent: {
     flexGrow: 1, // Allows the content to expand to fill the space
     paddingBottom: 90, // Keeps a padding at the bottom
@@ -157,8 +188,11 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#893BFF',
+    padding: 10,
+    },
+  headerImage: {
+    width: '40%', 
+    resizeMode: 'contain', 
   },
   headerText: {
     fontSize: 24,
@@ -167,7 +201,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     paddingHorizontal: 20,
-    marginTop: 60,
+    marginTop: 30,
   },
   input: {
     height: 50,

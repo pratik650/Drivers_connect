@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
         padding: 20,
         borderBottomWidth: 1,
         borderBottomColor: '#e0e0e0',
-        backgroundColor: '#893BFF',
+        backgroundColor: '#357EC7',
         alignItems: 'center', // Align items horizontally in the center
         justifyContent: 'center', // Align items vertically in the center
     },

@@ -1,58 +1,89 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import Footer from './Footer';
 import { useNavigation } from '@react-navigation/native';
+import { useUser } from '../static_component/usercontext';
+import ImagePicker from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
+
+
+
 
 const homeIcon = require('../../assets/icons/back.png');
+const iconselect = require('../../assets/icons/imageupdate.png');
 const cabperson2 = require('../../Images/cabperson1.jpg');
 
 const Profile = () => {
+    const { user } = useUser();
     const navigation = useNavigation();
+    const [profilePic, setProfilePic] = useState(null);
 
     const [userData, setUserData] = useState({
         fullName: '',
         address: '',
         phoneNumber: '',
         email: '',
-        adhaarId: '',
-        birthdate: ''
     });
+
+    
+    const selectProfilePicture = () => {
+        const options = {
+            storageOptions: {
+                skipBackup: true,
+                path: 'images',
+            },
+        };
+    
+        launchImageLibrary(options, (response) => {
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else if (response.assets && response.assets.length > 0) {
+                // Accessing the first image's URI from the assets array
+                const source = { uri: response.assets[0].uri };
+                setProfilePic(source);
+            }
+        });
+    };
 
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await fetch('http://192.168.29.129:5000/api/drivers/register');
-                const data = await response.json();
-                console.log(data);
-                setUserData({
-                    fullName: data.fullName,
-                    address: data.address,
-                    phoneNumber: data.phoneNumber,
-                    email: data.email,
-                    adhaarId: data.adhaarId,
-                    birthdate: data.birthdate
+                if (!user.phoneNumber) {
+                    console.log('No phone number available');
+                    return;
+                }
+                
+                const response = await fetch(`http://192.168.1.14:3000/api/drivers/profile/${user.phoneNumber}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
                 });
+    
+                if (!response.ok) {
+                    throw new Error('Profile data fetch failed');
+                }
+                
+                const data = await response.json();
+                if (data && data.profile) {
+                    setUserData({
+                        fullName: data.profile.fullName,
+                        address: data.profile.address,
+                        phoneNumber: data.profile.phoneNumber,
+                        email: data.profile.email,
+                    });
+                }
             } catch (error) {
                 console.error('Error fetching user data:', error);
-                if (error.response) {
-                    console.log(error.response.data);
-                    console.log(error.response.status);
-                    console.log(error.response.headers);
-                } else if (error.request) {
-                    // The request was made but no response was received
-                    console.log(error.request);
-                } else {
-                    // Something happened in setting up the request that triggered an Error
-                    console.log('Error', error.message);
-                }
-                console.log(error.config);
+                // Here, you might want to update the UI to show the error
             }
         };
-
+    
         fetchUserData();
-    }, []);
-
+    }, [user.phoneNumber]); // Dependency array to re-run the effect if the phone number changes
+    
     return (
         <View style={styles.container}>
             <View style={styles.headcont}>
@@ -64,12 +95,18 @@ const Profile = () => {
             <View style={styles.header}>
             </View>
             <View style={styles.profileContainer}>
+            <TouchableOpacity onPress={selectProfilePicture}>
                 <Image
-                    source={cabperson2} // Replace with your image path
+                    source={profilePic || cabperson2} // Use the selected image or a default
                     style={styles.profileImage}
                 />
+            </TouchableOpacity>
+            
+                <Text style={{color:'black', textAlign:'center',margin:10}}>Update Profile</Text>
+        
+           
                 <View style={styles.infoContainer}>
-
+                    <Text style={{color:'black',fontWeight:'bold',fontSize:16}}>Username :</Text>
                     <TextInput
                         placeholder="Full name"
                         value={userData.fullName}
@@ -78,6 +115,7 @@ const Profile = () => {
                     />
                 </View>
                 <View style={styles.infoContainer}>
+                <Text style={{color:'black',fontWeight:'bold',fontSize:16}}>Address :</Text>
                     <TextInput
                         placeholder="Address"
                         value={userData.address}
@@ -85,34 +123,21 @@ const Profile = () => {
                         placeholderTextColor='#808080'
                     />
                 </View>
-                <View style={styles.infoContainer}>
+                <View style={styles.infoContainer} key={userData.phoneNumber}>
+                <Text style={{color:'black',fontWeight:'bold',fontSize:16}}>Phone-Number :</Text>
                     <TextInput
                         placeholder="PhoneNumber"
                         value={userData.phoneNumber}
+                        onChangeText={(text) => setUserData({...userData, phoneNumber: text})}
                         style={styles.input}
                         placeholderTextColor='#808080'
                     />
                 </View>
                 <View style={styles.infoContainer}>
+                <Text style={{color:'black',fontWeight:'bold',fontSize:16}}>Email :</Text>
                     <TextInput
                         placeholder="Gmail Account"
                         value={userData.email}
-                        style={styles.input}
-                        placeholderTextColor='#808080'
-                    />
-                </View>
-                <View style={styles.infoContainer}>
-                    <TextInput
-                        placeholder="Aadhar"
-                        value={userData.adhaarId}
-                        style={styles.input}
-                        placeholderTextColor='#808080'
-                    />
-                </View>
-                <View style={styles.infoContainer}>
-                    <TextInput
-                        placeholder="Birthdate"
-                        value={userData.birthdate}
                         style={styles.input}
                         placeholderTextColor='#808080'
                     />
@@ -121,14 +146,14 @@ const Profile = () => {
                     <Text style={styles.buttonText}>Edit profile</Text>
                 </TouchableOpacity>
             </View>
-            <Footer />
+            <Footer style={styles.footer} />
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     headcont: {
-        backgroundColor: '#893BFF', // This sets the background color for the header containing the icon and title
+        backgroundColor: '#357EC7', // This sets the background color for the header containing the icon and title
         flexDirection: 'row', // Ensures the items are in a row
         alignItems: 'center', // Centers items vertically
         justifyContent: 'flex-start', // Aligns items to the start of the row
@@ -159,8 +184,8 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     header: {
-        backgroundColor: '#893BFF',
-        paddingTop: 180, // Adjust this value as needed to position the header content from the top of the screen
+        backgroundColor: '#357EC7',
+        paddingTop: 160, // Adjust this value as needed to position the header content from the top of the screen
         paddingHorizontal: 10,
         flexDirection: 'row',
         alignItems: 'center', // This will vertically align the icon and the title
@@ -170,9 +195,9 @@ const styles = StyleSheet.create({
         marginTop: -50, // Adjust as needed to position the profile image over the header
     },
     profileImage: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
+        width: 130,
+        height: 130,
+        borderRadius: 70,
         borderColor: '#FFF',
         borderWidth: 2,
         backgroundColor: '#C4C4C4', // Placeholder color
@@ -194,7 +219,8 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 25,
-        marginTop: 20,
+        marginTop: 60,
+        marginBottom:60
     },
     buttonText: {
         color: '#FFF',

@@ -1,25 +1,29 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Image, Alert } from 'react-native';
-import backgroundImage from '../../Images/keyimage.jpg';
-import drivemelogo from '../../Images/Registerlogo.png';
+import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Image, Alert } from 'react-native';const cabregisterlogo = require('../../Images/drivecab.png');
+import { useUser } from '../static_component/usercontext';
 
 const Login = ({ navigation }) => {
-  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [Phonenumber, setPhoneNumber] = useState('');
+  const { updateUser } = useUser();
 
+  const navigateTosignup = () => {
+    navigation.navigate('DriverRegistration');
+  };
   const navigateToLogin = async () => {
-    if (username.trim() === '' || password.trim() === '') {
+    if (Phonenumber.trim() === '' || password.trim() === '') {
       Alert.alert('Missing Information', 'Please enter both mobile number and password.');
       return;
     }
-
+   
     const loginData = {
-      phoneNumber: username.trim(), // Assuming that 'username' is actually the phone number
+      Phonenumber: Phonenumber.trim(), 
       password: password.trim(),
     };
 
     try {
-      const response = await fetch('http://192.168.29.129:5000/api/drivers/login', {
+      const response = await fetch('http://192.168.1.14:3000/api/drivers/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -29,38 +33,43 @@ const Login = ({ navigation }) => {
 
       if (response.ok) {
         const json = await response.json();
-        console.log('Login successful:', json);
-        const userName = json.userName || 'User'; // Default to 'User' if fullName is not available
-
-        Alert.alert("Welcome", userName);
-        
-        navigation.navigate('Home');
+        setIsModalVisible(true);
+        updateUser({ phoneNumber: Phonenumber });
       } else {
-        // If response is not ok, you might still want to parse it as json if the server sent a json error response
         const json = await response.json();
         console.log('Login failed response:', json);
         Alert.alert('Login Failed', json.message || 'An error occurred. Please try again.');
       }
     } catch (error) {
       // Handle network errors
-      Alert.alert('Network Error', 'Unable to connect to the server. Please check your internet connection and try again.');
       console.error('Login request error:', error);
     }
   };
 
 
 
+
   return (
-    <ImageBackground source={backgroundImage} style={styles.background}>
       <View style={styles.centeredContainer}>
-        <Image source={drivemelogo} style={styles.drivemelogo} />
+        <View style={styles.headercontainer}>
+      <TouchableOpacity style={styles.header}>
+        <Image
+          source={cabregisterlogo}
+          style={styles.headerImage}
+        />
+      </TouchableOpacity>
+      <View style={styles.Headertextdiv}>
+      <Text style={styles.titleText}>DriverGo App</Text>
+      <Text style={styles.subtitleText}>Find your way easily with DriverGo.</Text>
+      </View>
+      </View>
         <View style={styles.container}>
           <Text style={styles.heading}>Mobile</Text>
           <TextInput
             placeholder="Enter your mobile number"
             placeholderTextColor='#A9A9A9'
-            value={username}
-            onChangeText={setUsername}
+            value={Phonenumber}
+            onChangeText={setPhoneNumber}
             style={styles.input}
           />
           <Text style={styles.heading}>Password</Text>
@@ -73,31 +82,69 @@ const Login = ({ navigation }) => {
             style={styles.input}
           />
           <Text style={styles.forgotPassword}>Forget Password?</Text>
+          <Text style={styles.haveaccount} onPress={navigateTosignup}>Dont have account Signup!</Text>
           <TouchableOpacity style={styles.button} onPress={navigateToLogin}>
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
         </View>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={() => {
+          setIsModalVisible(!isModalVisible);
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Welcome! to Driveme {'\n'} {'\n'}Your journey to effortless travel begins here.</Text>
+            <TouchableOpacity
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => {
+                setIsModalVisible(!isModalVisible);
+                navigation.navigate('Home'); // Navigate after closing the modal
+              }}>
+              <Text style={{color:'white'}}>Go to Home</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
       </View>
-    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  headercontainer:{
+    backgroundColor:'#357EC7',
+    paddingBottom:50
+  },
+  Headertextdiv: {
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  titleText: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginTop: -40, // Adjust to your screen
+    color:'black',
+  },
+  subtitleText: {
+    fontSize: 16,
+    color: 'white',
+  },
   background: {
     flex: 1,
     width: '100%',
   },
   centeredContainer: {
-    marginTop: 30, // Adjusted from '10rem' to a numeric value
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    flex: 1
   },
-  drivemelogo: {
-    marginBottom: 100,
-    flex: 1,
-    width: '100%',
-    resizeMode: 'contain', // Ensure the logo fits well
+  header: {
+    alignItems: 'center',
+    padding: 10,
+    },
+  headerImage: {
+    width: '40%', 
+    resizeMode: 'contain', 
   },
   container: {
     width: '100%',
@@ -119,13 +166,19 @@ const styles = StyleSheet.create({
     fontSize: 16, // Adjusted from '12px' to a numeric value
   },
   heading: {
-    color: 'white',
+    color: 'black',
     marginBottom: 5,
+  },
+  haveaccount: { 
+    textAlign: 'right',
+    color: '#6495ED',
+    fontSize: 14, // Adjusted from '10px' to a numeric value
+    marginBottom: 15,
   },
   forgotPassword: {
     textAlign: 'right',
-    color: 'white',
-    fontSize: 16, // Adjusted from '10px' to a numeric value
+    color: 'black',
+    fontSize: 14, // Adjusted from '10px' to a numeric value
     marginBottom: 15,
   },
   button: {
@@ -137,6 +190,32 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
   },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+},
+modalView: {
+    margin: 20,
+    backgroundColor: "#E6E6FA",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+        width: 0,
+        height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+},
+modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+    color:'black',
+},
 });
 
 export default Login;
