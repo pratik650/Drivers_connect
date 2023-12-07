@@ -1,5 +1,6 @@
 const Driver = require('../models/Driver');
 const bcrypt = require('bcrypt');
+const path = require('path');
 
 exports.registerDriver = async (req, res) => {
     console.log("step1")
@@ -94,12 +95,15 @@ exports.getDriverProfile = async (req, res) => {
 
         // Select the fields you want to send back
         const profileData = {
+            id:driver._id,
             fullName: driver.fullName,
             address: driver.address,
             phoneNumber: driver.Phonenumber,
             email: driver.email,
-           
+            // profilepic:driver.profileImage,
+            profilepic: `http://localhost:5000/images/${path.basename(driver.profileImage)}`
         };
+       console.log(profileData)
         res.json({
             message: 'Profile fetched successfully.',
             profile: profileData,
@@ -127,5 +131,35 @@ exports.driverDetails = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Server error occurred.', error: error.message });
+    }
+};
+
+
+exports.updateprofile = async (req, res) => {
+    try {
+        const userID = req.body.userID;
+        if (!userID) {
+            return res.status(400).json({ message: 'User ID is required' });
+        }
+        const imagePath = req.file?.path;
+        if (!imagePath) {
+            return res.status(400).json({ message: 'No image uploaded' });
+        }
+
+        // Update the user's profile in the database
+        const updatedUser = await Driver.findByIdAndUpdate(
+            userID, 
+            { profileImage: imagePath },
+            { new: true, runValidators: true } // return the updated object and run schema validators
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json({ message: 'Profile updated successfully', profileImage: imagePath });
+    } catch (error) {
+        console.error("Error in updateprofile: ", error);
+        res.status(500).json({ message: 'Error updating profile', error: error.message });
     }
 };

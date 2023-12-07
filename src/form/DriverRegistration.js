@@ -44,7 +44,7 @@ const DriverRegistration = () => {
     };
 
     try {
-      const response = await fetch('http://192.168.1.14:3000/api/drivers/register', {
+      const response = await fetch('http://192.168.1.14:5000/api/drivers/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

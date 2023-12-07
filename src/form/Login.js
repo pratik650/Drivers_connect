@@ -23,7 +23,7 @@ const Login = ({ navigation }) => {
     };
 
     try {
-      const response = await fetch('http://192.168.1.14:3000/api/drivers/login', {
+      const response = await fetch('http://192.168.1.14:5000/api/drivers/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -45,8 +45,6 @@ const Login = ({ navigation }) => {
       console.error('Login request error:', error);
     }
   };
-
-
 
 
   return (
@@ -98,7 +96,7 @@ const Login = ({ navigation }) => {
           <View style={styles.modalView}>
             <Text style={styles.modalText}>Welcome! to Driveme {'\n'} {'\n'}Your journey to effortless travel begins here.</Text>
             <TouchableOpacity
-              style={[styles.button, styles.buttonClose]}
+               style={[styles.button, styles.buttonClose]}
               onPress={() => {
                 setIsModalVisible(!isModalVisible);
                 navigation.navigate('Home'); // Navigate after closing the modal

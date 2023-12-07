@@ -7,8 +7,6 @@ import ImagePicker from 'react-native-image-picker';
 import { launchImageLibrary } from 'react-native-image-picker';
 
 
-
-
 const homeIcon = require('../../assets/icons/back.png');
 const iconselect = require('../../assets/icons/imageupdate.png');
 const cabperson2 = require('../../Images/cabperson1.jpg');
@@ -17,15 +15,18 @@ const Profile = () => {
     const { user } = useUser();
     const navigation = useNavigation();
     const [profilePic, setProfilePic] = useState(null);
+    const [image, setImage] = useState(null);
 
     const [userData, setUserData] = useState({
+        id: '',
         fullName: '',
         address: '',
         phoneNumber: '',
         email: '',
+        profileImage: '',
     });
 
-    
+
     const selectProfilePicture = () => {
         const options = {
             storageOptions: {
@@ -33,7 +34,7 @@ const Profile = () => {
                 path: 'images',
             },
         };
-    
+
         launchImageLibrary(options, (response) => {
             if (response.didCancel) {
                 console.log('User cancelled image picker');
@@ -54,36 +55,67 @@ const Profile = () => {
                     console.log('No phone number available');
                     return;
                 }
-                
-                const response = await fetch(`http://192.168.1.14:3000/api/drivers/profile/${user.phoneNumber}`, {
+                const response = await fetch(`http://192.168.1.14:5000/api/drivers/profile/${user.phoneNumber}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                 });
-    
+
                 if (!response.ok) {
                     throw new Error('Profile data fetch failed');
                 }
-                
+
                 const data = await response.json();
+                console.log(data);
                 if (data && data.profile) {
                     setUserData({
+                        id: data.profile.id,
                         fullName: data.profile.fullName,
                         address: data.profile.address,
                         phoneNumber: data.profile.phoneNumber,
                         email: data.profile.email,
+                        profileImage: data.profile.profilepic
                     });
                 }
             } catch (error) {
                 console.error('Error fetching user data:', error);
-                // Here, you might want to update the UI to show the error
             }
         };
-    
+
         fetchUserData();
-    }, [user.phoneNumber]); // Dependency array to re-run the effect if the phone number changes
-    
+    }, [user.phoneNumber]);
+
+    const updateProfileImage = async () => {
+        if (!profilePic) {
+            alert("Please select an image first.");
+            return;
+        }
+        const formData = new FormData();
+        formData.append('image', {
+            uri: profilePic.uri,
+            type: profilePic.type || 'image/jpeg', // The MIME type of the image, with a fallback default
+            name: profilePic.fileName || `profilepic-${Date.now()}.jpg`,
+        });
+        formData.append('userID', userData.id);
+        try {
+            const response = await fetch('http://192.168.1.14:5000/api/drivers/updateprofile', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                console.log("Image updated successfully");
+            } else {
+                console.log("Failed to update image");
+                // Handle error response
+            }
+        } catch (error) {
+            console.error("Error while updating image: ", error);
+        }
+    };
+   
+
     return (
         <View style={styles.container}>
             <View style={styles.headcont}>
@@ -95,18 +127,18 @@ const Profile = () => {
             <View style={styles.header}>
             </View>
             <View style={styles.profileContainer}>
-            <TouchableOpacity onPress={selectProfilePicture}>
-                <Image
-                    source={profilePic || cabperson2} // Use the selected image or a default
-                    style={styles.profileImage}
-                />
-            </TouchableOpacity>
-            
-                <Text style={{color:'black', textAlign:'center',margin:10}}>Update Profile</Text>
-        
-           
+                <TouchableOpacity onPress={selectProfilePicture}>
+                    <Image
+                        source={profilePic ? profilePic : (userData.profileImage ? { uri: userData.profileImage } : cabperson2)}
+                        style={styles.profileImage}
+                    />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.btnimgset} onPress={updateProfileImage}>
+                    <Text value={userData.id} style={{ color: 'black', textAlign: 'center', margin: 10 }}>Update Profile</Text>
+                </TouchableOpacity>
+
                 <View style={styles.infoContainer}>
-                    <Text style={{color:'black',fontWeight:'bold',fontSize:16}}>Username :</Text>
+                    <Text style={{ color: 'black', fontWeight: 'bold', fontSize: 16 }}>Username :</Text>
                     <TextInput
                         placeholder="Full name"
                         value={userData.fullName}
@@ -115,7 +147,7 @@ const Profile = () => {
                     />
                 </View>
                 <View style={styles.infoContainer}>
-                <Text style={{color:'black',fontWeight:'bold',fontSize:16}}>Address :</Text>
+                    <Text style={{ color: 'black', fontWeight: 'bold', fontSize: 16 }}>Address :</Text>
                     <TextInput
                         placeholder="Address"
                         value={userData.address}
@@ -124,17 +156,17 @@ const Profile = () => {
                     />
                 </View>
                 <View style={styles.infoContainer} key={userData.phoneNumber}>
-                <Text style={{color:'black',fontWeight:'bold',fontSize:16}}>Phone-Number :</Text>
+                    <Text style={{ color: 'black', fontWeight: 'bold', fontSize: 16 }}>Phone-Number :</Text>
                     <TextInput
                         placeholder="PhoneNumber"
                         value={userData.phoneNumber}
-                        onChangeText={(text) => setUserData({...userData, phoneNumber: text})}
+                        onChangeText={(text) => setUserData({ ...userData, phoneNumber: text })}
                         style={styles.input}
                         placeholderTextColor='#808080'
                     />
                 </View>
                 <View style={styles.infoContainer}>
-                <Text style={{color:'black',fontWeight:'bold',fontSize:16}}>Email :</Text>
+                    <Text style={{ color: 'black', fontWeight: 'bold', fontSize: 16 }}>Email :</Text>
                     <TextInput
                         placeholder="Gmail Account"
                         value={userData.email}
@@ -152,6 +184,11 @@ const Profile = () => {
 };
 
 const styles = StyleSheet.create({
+    btnimgset: {
+        backgroundColor: 'green',
+        borderRadius: 20,
+        margin: 10
+    },
     headcont: {
         backgroundColor: '#357EC7', // This sets the background color for the header containing the icon and title
         flexDirection: 'row', // Ensures the items are in a row
@@ -200,7 +237,8 @@ const styles = StyleSheet.create({
         borderRadius: 70,
         borderColor: '#FFF',
         borderWidth: 2,
-        backgroundColor: '#C4C4C4', // Placeholder color
+        backgroundColor:'white'
+       
     },
     infoContainer: {
         flexDirection: 'row',
@@ -220,7 +258,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         borderRadius: 25,
         marginTop: 60,
-        marginBottom:60
+        marginBottom: 60
     },
     buttonText: {
         color: '#FFF',

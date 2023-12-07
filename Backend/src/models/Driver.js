@@ -38,6 +38,11 @@ const driverSchema = new mongoose.Schema({
     type: Date,
     required: [true, 'Birthdate is required']
   },
+  profileImage: {
+    type: String,
+    required: false, // Optional field
+    trim: true
+  },
   eligible: {
     type: Boolean,
     required: [true, 'Eligibility status is required']
