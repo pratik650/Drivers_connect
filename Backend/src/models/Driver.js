@@ -40,7 +40,7 @@ const driverSchema = new mongoose.Schema({
   },
   profileImage: {
     type: String,
-    required: false, // Optional field
+    required: false,
     trim: true
   },
   eligible: {

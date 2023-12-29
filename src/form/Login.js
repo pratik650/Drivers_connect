@@ -23,7 +23,7 @@ const Login = ({ navigation }) => {
     };
 
     try {
-      const response = await fetch('http://192.168.1.14:5000/api/drivers/login', {
+      const response = await fetch('http://api.lsdriver.co.in/api/drivers/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

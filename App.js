@@ -23,7 +23,7 @@ const App = () => {
     <NotificationProvider>
       <NavigationContainer>
       <UserProvider>
-        <Stack.Navigator initialRouteName="Login" screenOptions={{
+        <Stack.Navigator initialRouteName="Splashscreen" screenOptions={{
           headerShown: false,
         }}>
           <Stack.Screen name="Splashscreen" component={Splashscreen} />

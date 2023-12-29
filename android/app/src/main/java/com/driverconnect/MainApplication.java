@@ -1,4 +1,4 @@
-package com.driveme;
+package com.driverconnect;
 
 import android.app.Application;
 import com.facebook.react.PackageList;

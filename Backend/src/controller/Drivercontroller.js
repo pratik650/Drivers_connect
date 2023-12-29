@@ -86,13 +86,12 @@ exports.driverLogin = async (req, res) => {
 
 
 exports.getDriverProfile = async (req, res) => {
-    const { Phonenumber }  = req.params; // Assuming you're using Phonenumber as the identifier
+    const { Phonenumber }  = req.params; 
     try {
         const driver = await Driver.findOne({ Phonenumber }).exec();
         if (!driver) {
             return res.status(404).json({ message: 'Driver not found.' });
         }
-
         // Select the fields you want to send back
         const profileData = {
             id:driver._id,
@@ -100,10 +99,8 @@ exports.getDriverProfile = async (req, res) => {
             address: driver.address,
             phoneNumber: driver.Phonenumber,
             email: driver.email,
-            // profilepic:driver.profileImage,
-            profilepic: `http://localhost:5000/images/${path.basename(driver.profileImage)}`
         };
-       console.log(profileData)
+
         res.json({
             message: 'Profile fetched successfully.',
             profile: profileData,
@@ -141,15 +138,19 @@ exports.updateprofile = async (req, res) => {
         if (!userID) {
             return res.status(400).json({ message: 'User ID is required' });
         }
+
         const imagePath = req.file?.path;
         if (!imagePath) {
             return res.status(400).json({ message: 'No image uploaded' });
         }
 
+        // Extract the relative path from imagePath
+        const relativePath = imagePath.split('src/upload/')[1]; // Adjust the split parameter based on your folder structure
+
         // Update the user's profile in the database
         const updatedUser = await Driver.findByIdAndUpdate(
             userID, 
-            { profileImage: imagePath },
+            { profileImage: relativePath },
             { new: true, runValidators: true } // return the updated object and run schema validators
         );
 
@@ -157,7 +158,7 @@ exports.updateprofile = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        res.status(200).json({ message: 'Profile updated successfully', profileImage: imagePath });
+        res.status(200).json({ message: 'Profile updated successfully', profileImage: relativePath });
     } catch (error) {
         console.error("Error in updateprofile: ", error);
         res.status(500).json({ message: 'Error updating profile', error: error.message });

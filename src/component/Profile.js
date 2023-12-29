@@ -8,7 +8,6 @@ import { launchImageLibrary } from 'react-native-image-picker';
 
 
 const homeIcon = require('../../assets/icons/back.png');
-const iconselect = require('../../assets/icons/imageupdate.png');
 const cabperson2 = require('../../Images/cabperson1.jpg');
 
 const Profile = () => {
@@ -55,19 +54,17 @@ const Profile = () => {
                     console.log('No phone number available');
                     return;
                 }
-                const response = await fetch(`http://192.168.1.14:5000/api/drivers/profile/${user.phoneNumber}`, {
+                const response = await fetch(`http://192.168.1.99:5000/api/drivers/profile/${user.phoneNumber}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                 });
-
                 if (!response.ok) {
                     throw new Error('Profile data fetch failed');
                 }
-
+               
                 const data = await response.json();
-                console.log(data);
                 if (data && data.profile) {
                     setUserData({
                         id: data.profile.id,
@@ -99,11 +96,14 @@ const Profile = () => {
         });
         formData.append('userID', userData.id);
         try {
-            const response = await fetch('http://192.168.1.14:5000/api/drivers/updateprofile', {
+            const response = await fetch('http://192.168.1.99:5000/api/drivers/updateprofile', {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
                 body: formData,
             });
-
+            console.log("formdata",formData)
             if (response.ok) {
                 console.log("Image updated successfully");
             } else {
@@ -114,7 +114,7 @@ const Profile = () => {
             console.error("Error while updating image: ", error);
         }
     };
-   
+
 
     return (
         <View style={styles.container}>
@@ -129,7 +129,11 @@ const Profile = () => {
             <View style={styles.profileContainer}>
                 <TouchableOpacity onPress={selectProfilePicture}>
                     <Image
-                        source={profilePic ? profilePic : (userData.profileImage ? { uri: userData.profileImage } : cabperson2)}
+                        source={
+                            userData.profileImage
+                                ? { uri: `http://localhost:5000/images/${userData.profileImage}` }
+                                : cabperson2
+                        }
                         style={styles.profileImage}
                     />
                 </TouchableOpacity>
@@ -237,8 +241,8 @@ const styles = StyleSheet.create({
         borderRadius: 70,
         borderColor: '#FFF',
         borderWidth: 2,
-        backgroundColor:'white'
-       
+        backgroundColor: 'white'
+
     },
     infoContainer: {
         flexDirection: 'row',
