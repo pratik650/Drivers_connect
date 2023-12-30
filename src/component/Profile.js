@@ -54,7 +54,7 @@ const Profile = () => {
                     console.log('No phone number available');
                     return;
                 }
-                const response = await fetch(`http://192.168.1.99:5000/api/drivers/profile/${user.phoneNumber}`, {
+                const response = await fetch(`http://192.168.1.14:5000/api/drivers/profile/${user.phoneNumber}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

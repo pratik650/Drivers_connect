@@ -11,6 +11,6 @@ router.post('/register', driverController.registerDriver);
 router.post('/login', driverController.driverLogin);
 router.get('/profile/:Phonenumber', driverController.getDriverProfile);
 router.get('/driverdetails', driverController.driverDetails);
-router.post('/updateprofile', upload.single('image'), driverController.updateprofile);
+// router.post('/updateprofile', upload.single('image'), driverController.updateprofile);
 
 module.exports = router;

@@ -100,7 +100,7 @@ exports.getDriverProfile = async (req, res) => {
             phoneNumber: driver.Phonenumber,
             email: driver.email,
         };
-
+        console.log(profileData);
         res.json({
             message: 'Profile fetched successfully.',
             profile: profileData,

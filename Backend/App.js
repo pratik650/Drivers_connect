@@ -3,12 +3,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dbConfig = require('./src/config/Db');
 const cors = require('cors');
-const path = require('path');
+// const path = require('path');
 
 const app = express();
 dbConfig.connect();
-console.log('Serving static files from:', path.join(__dirname, 'src', 'upload'));
-app.use('/images', express.static(path.join(__dirname, 'src', 'upload')));
+// console.log('Serving static files from:', path.join(__dirname, 'src', 'upload'));
+// app.use('/images', express.static(path.join(__dirname, 'src', 'upload')));
 
 // Enable CORS
 app.use(cors()); // Corrected the usage of cors
