@@ -8,6 +8,7 @@ const Usercontroller = require('../controller/Usercontroller');
 
 router.post('/register', Usercontroller.registerUser);
 router.post('/login', Usercontroller.userLogin);
+router.post('/booking', Usercontroller.userBooking);
 router.get('/profile/:Phonenumber', Usercontroller.getUserProfile);
 router.get('/userDetails',Usercontroller.userDetails);
 
